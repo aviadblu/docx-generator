@@ -1,6 +1,18 @@
 {
-  "name": "storm",
-  "version": "0.0.1",
+  "name": "docx-generator",
+  "version": "0.0.3",
+  "description": "",
+  "main": "dist/index.js",
+  "author": "Aviad Blumenfeld <aviadblu@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "install.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aviadblu/docx-generator.git"
+  },
   "dependencies": {
     "xml2js": "~0.4.16",
     "lodash": "~4.5.1",
