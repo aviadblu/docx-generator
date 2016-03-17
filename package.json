@@ -1,0 +1,13 @@
+{
+  "name": "storm",
+  "version": "0.0.1",
+  "dependencies": {
+    "xml2js": "~0.4.16",
+    "lodash": "~4.5.1",
+    "fs-extra": "~0.26.5",
+    "q": "~1.4.1",
+    "uuid": "~2.0.1",
+    "slimerjs": "~0.906.1",
+    "cheerio": "~0.20.0"
+  }
+}

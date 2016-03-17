@@ -1,0 +1,278 @@
+'use strict';
+declare var require:any;
+declare var __dirname:any;
+declare var module:any;
+
+var path = require('path');
+var fs = require('fs');
+var childProcess = require('child_process');
+var slimerjs = require('slimerjs');
+var binPath = slimerjs.path;
+var Emitter = require('events').EventEmitter;
+var Q = require('q');
+var cheerio = require('cheerio');
+var _ = require('lodash');
+
+export class Crawler {
+    private url:string;
+    private tmp:string;
+    private sectionTypeReaderMap:Object = {
+        'table': this.readTableSection,
+        'widget': this.readWidgetSection
+    };
+    public events:any;
+
+    constructor(url:string, tmp:string) {
+        this.url = url;
+        this.tmp = tmp;
+        this.events = Object.create(Emitter.prototype);
+        // create tmp folder
+        fs.mkdir(tmp, '0755', function(e) {});
+    }
+
+    public static makeTextPlain(txt:any):string {
+        //return txt.replace(/\n/g, '').replace(/\t/g, '');
+        return txt.trim();
+    }
+
+    private readWidgetSection(sectionDOM:any):Object {
+        var returnData = {};
+        var sectionID = sectionDOM.attr('id');
+        var _self = this;
+        var lineChart = sectionDOM.find('.line-chart-wrapper');
+        var tableData, fixedTableData = {
+            tableCols: [
+                {
+                    name: '-',
+                    width: '5%'
+                },
+                {
+                    name: 'Metric',
+                    width: '35%'
+                },
+                {
+                    name: 'Location',
+                    width: '20%'
+                },
+                {
+                    name: 'Script',
+                    width: '20%'
+                },
+                {
+                    name: 'Emulation',
+                    width: '20%'
+                }
+            ],
+            tableRowsData: []
+        };
+        if(lineChart) {
+            returnData['images'] = [{
+                url: _self.tmp + '/media/section_' + sectionID + '.png'
+            }];
+            // read table data
+
+            tableData = _self.readTableSection.apply(_self, [sectionDOM.find('.legend-container-bottom')]);
+            //console.log(tableData);
+            // fix data
+            tableData.tableRowsData.forEach(function(row){
+                // remove set visible col
+                row.splice(0,1);
+                // remove optional transaction name
+                row.splice(2,1);
+                // remove optional error id
+                row.splice(5,1);
+                // remove value
+                row.splice(5,1);
+                row[0] = {color: '2A925B', dashed: false};
+                fixedTableData.tableRowsData.push(row);
+            });
+
+            returnData['tableCols'] = fixedTableData.tableCols;
+            returnData['tableRowsData'] = fixedTableData.tableRowsData;
+
+        } else {
+            // TODO handle table widget
+            returnData['type'] = 'table';
+
+        }
+        return returnData;
+    }
+
+    private readTableSection(sectionDOM:any):Object {
+        var _self = this;
+        var table = sectionDOM.find('table');
+
+        var thead = table.find('thead');
+        var tbody = table.find('tbody');
+        var rows = table.find('tbody').find('tr');
+        var colsCounter = 0;
+        for (let i = 0; i < rows['0'].children.length; i++) {
+            let el = rows['0'].children[i];
+            if (el.type === 'tag' && el.name === 'td') {
+                colsCounter++;
+            }
+        }
+
+        var colWidth = Math.floor(100 / colsCounter);
+        var firstColWidth = 100 - colWidth * (colsCounter - 1);
+
+        var tableCols = [];
+        var tableRowsData = [];
+
+        // init tableCols
+        var c = 0;
+        for (let i = 0; i < colsCounter; i++) {
+            tableCols.push({
+                width: (c == 0 ? firstColWidth + '%' : colWidth + '%')
+            });
+            c++;
+        }
+
+        // get head if exists
+        if (thead.length) {
+            tableCols = [];
+            var thArr = thead.find('th');
+            var colWidth = Math.floor(100 / thArr.length);
+            var firstColWidth = 100 - colWidth * (thArr.length - 1);
+            var header;
+            let c = 0;
+            thArr.each(function (key, value) {
+                header = value.children[0] ? value.children[0].data : '-';
+                tableCols.push({
+                    name: Crawler.makeTextPlain(header),
+                    width: (c == 0 ? firstColWidth + '%' : colWidth + '%')
+                });
+                c++;
+            });
+        }
+
+        // fill table data
+        Object.keys(rows).forEach(function (key) {
+            var rowJQ = cheerio.load(rows[key]);
+            var rowArr = [];
+            //console.log(rowJQ('td'));
+            rowJQ('td').each(function (key, value) {
+                var cellJQ = cheerio.load(value);
+                rowArr.push(Crawler.makeTextPlain(cellJQ(this).text()));
+            });
+
+            if (rowArr.length) {
+                tableRowsData.push(rowArr);
+            }
+
+        });
+
+        return {
+            tableCols: tableCols,
+            tableRowsData: tableRowsData
+        };
+    }
+
+    private getSectionTypeFromClass(classStr:string):string {
+        var sectionType = null,
+            ex = classStr.split(' '),
+            ex2 = [];
+        ex.forEach(function (className) {
+            if (className.indexOf('crawler-section-type') > -1) {
+                ex2 = className.split('_');
+                if (ex2[1]) {
+                    sectionType = ex2[1];
+                }
+            }
+        });
+
+        return sectionType;
+    }
+
+    private readSectionDOM(type:string, sectionDOM:any):Object {
+        var _self = this;
+        if (this.sectionTypeReaderMap[type]) {
+            return this.sectionTypeReaderMap[type].apply(_self, [sectionDOM]);
+        } else {
+            return null;
+        }
+    }
+
+    public analyzeDOM(localFileUrl) {
+        var _self = this;
+        var $ = cheerio.load(fs.readFileSync(localFileUrl, 'utf8'));
+
+        // get all sections:
+        var sectionsDOM = $('.crawler-section').not('.crawler-section-not-visible');
+        var sections = [];
+        var sectionType,
+            data,
+            ex = [],
+            ex2 = [],
+            sectionDOM,
+            sectionJsonData;
+
+        // create cover:
+        sections.push({
+            type: 'cover',
+            testName: Crawler.makeTextPlain($('.crawler-testName').text()),
+            status: Crawler.makeTextPlain($('.crawler-testStatus').text())
+        });
+
+
+        sectionsDOM.each(function (key, sectionData) {
+            // detect section type
+            sectionType = _self.getSectionTypeFromClass(sectionData.attribs.class);
+
+            if (sectionType) {
+                sectionDOM = $('#' + sectionData.attribs.id);
+                data = {
+                    type: sectionType,
+                    name: Crawler.makeTextPlain(sectionDOM.find('.crawler-sectionName').text()),
+                    description: Crawler.makeTextPlain(sectionDOM.find('.crawler-sectionDescription').text())
+                };
+                sectionJsonData = _self.readSectionDOM(sectionType, sectionDOM);
+                _.assign(data, sectionJsonData);
+
+
+                if(sectionJsonData) {
+                    sections.push(data);
+                }
+            }
+
+        });
+
+        return sections;
+
+    }
+
+    public run() {
+        var deferred = Q.defer();
+        var _self = this;
+
+        //console.log(_self.url + ' ' + _self.tmp);
+
+        var childArgs = [
+            path.join(__dirname, 'render.js'),
+            _self.url,
+            _self.tmp
+        ];
+
+        var ps = childProcess.execFile(binPath, childArgs, function (err, stdout, stderr) {
+            console.log(stderr);
+            console.log(stdout);
+        });
+
+        ps.on('exit', function (c, d) {
+            _self.events.emit('done');
+            deferred.resolve();
+        });
+
+        ps.stdout.on('data', function (std) {
+            _self.events.emit('stdout', std);
+        });
+
+        ps.stderr.on('data', function (std) {
+            _self.events.emit('stderr', std);
+        });
+
+        return deferred.promise;
+    }
+
+
+}
