@@ -31,3 +31,13 @@ node_modules
 
 # Optional REPL history
 .node_repl_history
+
+output/
+.idea/
+
+src/**/*.js
+src/**/*.d.ts
+src/**/*.js.map
+
+dist/**/*.d.ts
+dist/**/*.js.map
