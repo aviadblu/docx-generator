@@ -25,9 +25,6 @@ var captureContent = function() {
     var htmlBody = page.evaluate(function () {
         return $('body').html();
     });
-
-    system.stdout.writeLine(tmp + '/data.txt');
-
     fs.write(tmp + '/data.html', page.content, 'w');
 };
 
