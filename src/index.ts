@@ -1,9 +1,7 @@
 'use strict';
 declare var require:any;
-declare var __dirname:any;
 declare var exports:any;
 
-var path = require('path');
 import {Crawler} from "./crawler/index";
 import {Docx} from "./lib/docx";
 
