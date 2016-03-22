@@ -165,8 +165,12 @@ var Docx = (function () {
         _self.images_relationships.forEach(function (imageToCopy) {
             copyFilesPromises.push(_self.copyFile(imageToCopy['url'], _self.docxTmpFolder + '/word/' + imageToCopy['localUrl']));
         });
-        Q.all(copyFilesPromises).then(function () {
+        Q.all(copyFilesPromises)
+            .then(function () {
             copyFilesDfd.resolve();
+        })
+            .catch(function (error) {
+            copyFilesDfd.reject(error);
         });
         // generate docx/word/document.xml file
         _self.buildDocumentObject();

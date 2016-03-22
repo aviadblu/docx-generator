@@ -63,7 +63,6 @@ export class Docx {
             if (error) {
                 dfd.reject(new Error(error));
             } else {
-
                 dfd.resolve();
             }
         });
@@ -121,8 +120,8 @@ export class Docx {
             descKey = Object.keys(section.description)[0];
             bodyKeys = Object.keys(section.body);
 
-            if(section.name[nameKey]) sectionsObject[nameKey] = section.name[nameKey];
-            if(section.description[descKey]) sectionsObject[descKey] = section.description[descKey];
+            if (section.name[nameKey]) sectionsObject[nameKey] = section.name[nameKey];
+            if (section.description[descKey]) sectionsObject[descKey] = section.description[descKey];
             bodyKeys.forEach(function (bodyElKey) {
                 sectionsObject[bodyElKey] = section.body[bodyElKey];
             });
@@ -185,9 +184,13 @@ export class Docx {
             copyFilesPromises.push(_self.copyFile(imageToCopy['url'], _self.docxTmpFolder + '/word/' + imageToCopy['localUrl']));
         });
 
-        Q.all(copyFilesPromises).then(function () {
-            copyFilesDfd.resolve();
-        });
+        Q.all(copyFilesPromises)
+            .then(function () {
+                copyFilesDfd.resolve();
+            })
+            .catch(function (error) {
+                copyFilesDfd.reject(error);
+            });
 
         // generate docx/word/document.xml file
         _self.buildDocumentObject();
