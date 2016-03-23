@@ -33,6 +33,6 @@ var Section = (function () {
         configurable: true
     });
     return Section;
-})();
+}());
 exports.Section = Section;
 //# sourceMappingURL=section.js.map

@@ -11,9 +11,9 @@ var table_factory_1 = require("../table/factories/table-factory");
 var SectionGroupedTable = (function (_super) {
     __extends(SectionGroupedTable, _super);
     function SectionGroupedTable(data) {
+        _super.call(this, data);
         var _self = this;
         var groupsCounter = 0;
-        _super.call(this, data);
         data['tableRowsData'].forEach(function (groupData) {
             var key;
             if (groupsCounter > 0) {
@@ -31,6 +31,6 @@ var SectionGroupedTable = (function (_super) {
         });
     }
     return SectionGroupedTable;
-})(section_1.Section);
+}(section_1.Section));
 exports.SectionGroupedTable = SectionGroupedTable;
 //# sourceMappingURL=index.js.map

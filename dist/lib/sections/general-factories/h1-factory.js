@@ -64,6 +64,6 @@ var H1Factory = (function () {
         return ret;
     };
     return H1Factory;
-})();
+}());
 exports.H1Factory = H1Factory;
 //# sourceMappingURL=h1-factory.js.map

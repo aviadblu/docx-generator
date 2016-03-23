@@ -27,6 +27,6 @@ var Config = (function () {
     Config._DEFAULT_FONT = 'Metric Web Light';
     Config._GRID_STYLE = 'PlainTable1'; //'GridTable2-Accent3'
     return Config;
-})();
+}());
 exports.Config = Config;
 //# sourceMappingURL=config.js.map

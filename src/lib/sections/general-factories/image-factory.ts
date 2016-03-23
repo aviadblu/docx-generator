@@ -1,8 +1,8 @@
 'use strict';
 declare var require:any;
 var _ = require('lodash');
-import {Config} from "../../../config";
-import {Section} from "../../section";
+import {Config} from "../../config";
+import {Section} from "../section";
 import {ISectionImage} from "./image-interface";
 
 export class ImageFactory {

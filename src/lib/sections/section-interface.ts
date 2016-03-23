@@ -1,6 +1,6 @@
 'use strict';
 
-import {ISectionImage} from "./widget/factories/image-interface";
+import {ISectionImage} from "./general-factories/image-interface";
 
 export interface ISectionData {
     name?: string;

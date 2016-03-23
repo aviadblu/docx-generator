@@ -64,6 +64,6 @@ var DocumentFileFactory = (function () {
         };
     };
     return DocumentFileFactory;
-})();
+}());
 exports.DocumentFileFactory = DocumentFileFactory;
 //# sourceMappingURL=document-file-factory.js.map

@@ -38,6 +38,6 @@ var SectionCover = (function (_super) {
         this.body[pageBreakKey] = pageBreakObj[pageBreakKey];
     }
     return SectionCover;
-})(section_1.Section);
+}(section_1.Section));
 exports.SectionCover = SectionCover;
 //# sourceMappingURL=index.js.map

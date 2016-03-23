@@ -1,7 +1,7 @@
 'use strict';
 var _ = require('lodash');
-var config_1 = require("../../../config");
-var section_1 = require("../../section");
+var config_1 = require("../../config");
+var section_1 = require("../section");
 var ImageFactory = (function () {
     function ImageFactory(image) {
         this.image = image;
@@ -177,6 +177,6 @@ var ImageFactory = (function () {
         return ret;
     };
     return ImageFactory;
-})();
+}());
 exports.ImageFactory = ImageFactory;
 //# sourceMappingURL=image-factory.js.map

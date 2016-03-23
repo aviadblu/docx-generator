@@ -46,6 +46,6 @@ var DescriptionFactory = (function () {
         return ret;
     };
     return DescriptionFactory;
-})();
+}());
 exports.DescriptionFactory = DescriptionFactory;
 //# sourceMappingURL=description-factory.js.map

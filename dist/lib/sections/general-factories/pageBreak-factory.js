@@ -23,6 +23,6 @@ var PageBreakFactory = (function () {
         return ret;
     };
     return PageBreakFactory;
-})();
+}());
 exports.PageBreakFactory = PageBreakFactory;
 //# sourceMappingURL=pageBreak-factory.js.map

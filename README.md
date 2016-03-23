@@ -3,21 +3,24 @@
 ## How to use:
 
 ```javascript
-
+var path = require('path');
 var docxGenerator = require('docx-generator');
-
+// tmp folder
 var tmpFolder = '/tmp/folder';
+// output folder
+var outputFolder = path.join(__dirname, './output');
+// result docx file name
+var fileName = 'file-' + new Date().getTime();
 // report web url
 var url = 'http://yoursite.com';
 // prepare crawler
 var crawler = new docxGenerator.Crawler(url, tmpFolder);
+
 // open url and get data
 crawler.run()
 .then(function(){
-    // set result docx file name
-    var name = 'file-' + new Date().getTime();
     // create docx object
-    var docx = new docxGenerator.Docx(tmpFolder, path.join(__dirname, './output'), name);
+    var docx = new docxGenerator.Docx(tmpFolder, outputFolder, fileName);
     // get sections data from crawler output
     var sections = crawler.analyzeDOM(tmpFolder + '/data.html');
     // create docx section

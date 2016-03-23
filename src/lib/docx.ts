@@ -22,6 +22,7 @@ import {SectionCover} from "./sections/cover/index";
 import {SectionTable} from "./sections/table/index";
 import {SectionGroupedTable} from "./sections/grouped-table/index";
 import {SectionWidget} from "./sections/widget/index";
+import {SectionDistribution} from "./sections/distribution/index";
 
 export class Docx {
     // target file path
@@ -47,7 +48,8 @@ export class Docx {
         cover: SectionCover,
         table: SectionTable,
         groupedTable: SectionGroupedTable,
-        widget: SectionWidget
+        widget: SectionWidget,
+        distribution: SectionDistribution
     };
 
     // private methods

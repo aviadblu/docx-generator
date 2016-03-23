@@ -78,6 +78,6 @@ var RelsDocumentFileFactory = (function () {
         return Relationships;
     };
     return RelsDocumentFileFactory;
-})();
+}());
 exports.RelsDocumentFileFactory = RelsDocumentFileFactory;
 //# sourceMappingURL=rels_document-file-factory.js.map

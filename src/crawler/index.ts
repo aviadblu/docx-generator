@@ -18,7 +18,8 @@ export class Crawler {
     private tmp:string;
     private sectionTypeReaderMap:Object = {
         'table': this.readTableSection,
-        'widget': this.readWidgetSection
+        'widget': this.readWidgetSection,
+        'distribution': this.readDistributionSection
     };
     public events:any;
 
@@ -31,71 +32,8 @@ export class Crawler {
     }
 
     public static makeTextPlain(txt:any):string {
-        //return txt.replace(/\n/g, '').replace(/\t/g, '');
+        //return txt.trim().replace(/\n/g, '').replace(/\t/g, '');
         return txt.trim();
-    }
-
-    private readWidgetSection(sectionDOM:any):Object {
-        var returnData = {};
-        var sectionID = sectionDOM.attr('id');
-        var _self = this;
-        var lineChart = sectionDOM.find('.line-chart-wrapper');
-        var tableData, fixedTableData = {
-            tableCols: [
-                {
-                    name: '-',
-                    width: '5%'
-                },
-                {
-                    name: 'Metric',
-                    width: '35%'
-                },
-                {
-                    name: 'Location',
-                    width: '20%'
-                },
-                {
-                    name: 'Script',
-                    width: '20%'
-                },
-                {
-                    name: 'Emulation',
-                    width: '20%'
-                }
-            ],
-            tableRowsData: []
-        };
-        if(lineChart) {
-            returnData['images'] = [{
-                url: _self.tmp + '/media/section_' + sectionID + '.png'
-            }];
-            // read table data
-
-            tableData = _self.readTableSection.apply(_self, [sectionDOM.find('.legend-container-bottom')]);
-            //console.log(tableData);
-            // fix data
-            tableData.tableRowsData.forEach(function(row){
-                // remove set visible col
-                row.splice(0,1);
-                // remove optional transaction name
-                row.splice(2,1);
-                // remove optional error id
-                row.splice(5,1);
-                // remove value
-                row.splice(5,1);
-                row[0] = {color: '2A925B', dashed: false};
-                fixedTableData.tableRowsData.push(row);
-            });
-
-            returnData['tableCols'] = fixedTableData.tableCols;
-            returnData['tableRowsData'] = fixedTableData.tableRowsData;
-
-        } else {
-            // TODO handle table widget
-            returnData['type'] = 'table';
-
-        }
-        return returnData;
     }
 
     private readTableSection(sectionDOM:any):Object {
@@ -166,6 +104,102 @@ export class Crawler {
             tableCols: tableCols,
             tableRowsData: tableRowsData
         };
+    }
+
+    private readWidgetSection(sectionDOM:any):Object {
+        var returnData = {};
+        var sectionID = sectionDOM.attr('id');
+        var _self = this;
+        var lineChart = sectionDOM.find('.line-chart-wrapper');
+        var tableData, fixedTableData = {
+            tableCols: [
+                {
+                    name: '-',
+                    width: '5%'
+                },
+                {
+                    name: 'Metric',
+                    width: '35%'
+                },
+                {
+                    name: 'Location',
+                    width: '20%'
+                },
+                {
+                    name: 'Script',
+                    width: '20%'
+                },
+                {
+                    name: 'Emulation',
+                    width: '20%'
+                }
+            ],
+            tableRowsData: []
+        };
+        if(lineChart) {
+            returnData['images'] = [{
+                url: _self.tmp + '/media/section_' + sectionID + '.png'
+            }];
+            // read table data
+
+            tableData = _self.readTableSection.apply(_self, [sectionDOM.find('.legend-container-bottom')]);
+            //console.log(tableData);
+            // fix data
+            tableData.tableRowsData.forEach(function(row){
+                // remove set visible col
+                row.splice(0,1);
+                // remove optional transaction name
+                row.splice(2,1);
+                // remove optional error id
+                row.splice(5,1);
+                // remove value
+                row.splice(5,1);
+                row[0] = {color: '2A925B', dashed: false};
+                fixedTableData.tableRowsData.push(row);
+            });
+
+            returnData['tableCols'] = fixedTableData.tableCols;
+            returnData['tableRowsData'] = fixedTableData.tableRowsData;
+
+        } else {
+            // TODO handle table widget
+            returnData['type'] = 'table';
+
+        }
+        return returnData;
+    }
+
+    private readDistributionSection(sectionDOM:any):Object {
+        var _self = this;
+        var returnData = {};
+
+        returnData['sites'] = [];
+
+
+        var sites = sectionDOM.find('.crawler-dist-site');
+        sites.each(function(k,siteDOM){
+            var site = {};
+            var $ = cheerio.load(siteDOM);
+            // headline
+            var headline = Crawler.makeTextPlain($(siteDOM).find('.crawler-dist-site-header').text());
+            var sub_headline = Crawler.makeTextPlain($(siteDOM).find('.crawler-dist-site-subHeader').text());
+            if(sub_headline) {
+                headline += ' ' + sub_headline;
+            }
+            site['headline'] = headline;
+
+            // table
+            var table = _self.readTableSection($(siteDOM));
+            _.assign(site, table);
+
+            returnData['sites'].push(site);
+        });
+
+        returnData['images'] = [{
+            url: _self.tmp + '/media/image_distGraph.png'
+        }];
+        
+        return returnData;
     }
 
     private getSectionTypeFromClass(classStr:string):string {

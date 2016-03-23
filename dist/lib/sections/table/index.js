@@ -13,6 +13,6 @@ var SectionTable = (function (_super) {
         this._body = new table_factory_1.TableFactory(data.tableCols, data.tableRowsData).generate();
     }
     return SectionTable;
-})(section_1.Section);
+}(section_1.Section));
 exports.SectionTable = SectionTable;
 //# sourceMappingURL=index.js.map

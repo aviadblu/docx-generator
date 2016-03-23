@@ -14,12 +14,13 @@
     "url": "https://github.com/aviadblu/docx-generator.git"
   },
   "dependencies": {
-    "xml2js": "~0.4.16",
-    "lodash": "~4.5.1",
+    "cheerio": "~0.20.0",
     "fs-extra": "~0.26.5",
+    "lodash": "~4.5.1",
     "q": "~1.4.1",
-    "uuid": "~2.0.1",
     "slimerjs": "~0.906.1",
-    "cheerio": "~0.20.0"
+    "ts-loader": "^0.8.1",
+    "uuid": "~2.0.1",
+    "xml2js": "~0.4.16"
   }
 }

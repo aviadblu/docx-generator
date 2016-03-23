@@ -87,6 +87,6 @@ var TestStatusFactory = (function () {
         return ret;
     };
     return TestStatusFactory;
-})();
+}());
 exports.TestStatusFactory = TestStatusFactory;
 //# sourceMappingURL=testStatus-factory.js.map

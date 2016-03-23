@@ -206,6 +206,6 @@ var RectFactory = (function () {
         return ret;
     };
     return RectFactory;
-})();
+}());
 exports.RectFactory = RectFactory;
 //# sourceMappingURL=rect-factory.js.map

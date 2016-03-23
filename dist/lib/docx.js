@@ -13,6 +13,7 @@ var index_1 = require("./sections/cover/index");
 var index_2 = require("./sections/table/index");
 var index_3 = require("./sections/grouped-table/index");
 var index_4 = require("./sections/widget/index");
+var index_5 = require("./sections/distribution/index");
 var Docx = (function () {
     // public methods
     function Docx(tmpFolder, targetFolder, name) {
@@ -31,7 +32,8 @@ var Docx = (function () {
             cover: index_1.SectionCover,
             table: index_2.SectionTable,
             groupedTable: index_3.SectionGroupedTable,
-            widget: index_4.SectionWidget
+            widget: index_4.SectionWidget,
+            distribution: index_5.SectionDistribution
         };
         this.target = targetFolder;
         this.name = name;
@@ -251,6 +253,6 @@ var Docx = (function () {
         });
     };
     return Docx;
-})();
+}());
 exports.Docx = Docx;
 //# sourceMappingURL=docx.js.map

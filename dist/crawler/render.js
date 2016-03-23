@@ -15,7 +15,6 @@ var captureContent = function () {
     var htmlBody = page.evaluate(function () {
         return $('body').html();
     });
-    system.stdout.writeLine(tmp + '/data.txt');
     fs.write(tmp + '/data.html', page.content, 'w');
 };
 var capture = function (targetFile, clipRect) {
@@ -23,7 +22,35 @@ var capture = function (targetFile, clipRect) {
     page.render(targetFile);
 };
 page.open(url);
-var captureSections = function () {
+var fixBoundaries = function (val) {
+    val = Math.round(val);
+    if (val < 0)
+        val = 0;
+    return val;
+};
+var captureImages = function () {
+    var imagesToCapture = page.evaluate(function () {
+        return document.getElementsByClassName("crawler-capture");
+    });
+    for (var i = 0; i < imagesToCapture.length; i++) {
+        var sectionImage = imagesToCapture[i];
+        var boundaries = sectionImage.getBoundingClientRect();
+        // get id
+        var imageId;
+        sectionImage.className.split(' ').forEach(function (cName) {
+            if (cName.indexOf('crawler-capture-id_') > -1) {
+                imageId = cName.split('_')[1];
+            }
+        });
+        capture(tmp + '/media/image_' + imageId + '.png', {
+            top: fixBoundaries(boundaries.top),
+            left: fixBoundaries(boundaries.left),
+            width: fixBoundaries(boundaries.width),
+            height: fixBoundaries(boundaries.height)
+        });
+    }
+};
+var captureSectionsImages = function () {
     var sectionsToCapture = page.evaluate(function () {
         return document.getElementsByClassName("line-chart-wrapper");
     });
@@ -35,12 +62,6 @@ var captureSections = function () {
         });
         return ret;
     });
-    var fixBoundaries = function (val) {
-        val = Math.round(val);
-        if (val < 0)
-            val = 0;
-        return val;
-    };
     for (var i = 0; i < sectionsToCapture.length; i++) {
         var sectionImage = sectionsToCapture[i];
         var sectionID = sectionsIdsWithCapture[i];
@@ -53,7 +74,6 @@ var captureSections = function () {
         });
     }
     system.stdout.writeLine('===slimerjs::: Done!!!');
-    slimer.exit();
 };
 var renderChecksLimit = 90; // in seconds
 var renderChecksCounter = 0;
@@ -67,7 +87,9 @@ function renderIfReady() {
         window.setTimeout(function () {
             system.stdout.writeLine('===slimerjs::: ++++ render.js: success');
             captureContent();
-            captureSections();
+            captureImages();
+            captureSectionsImages();
+            slimer.exit();
         }, 1000);
     }
     else if (renderChecksCounter >= renderChecksLimit) {

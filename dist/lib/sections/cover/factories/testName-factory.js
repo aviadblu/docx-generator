@@ -72,6 +72,6 @@ var TestNameFactory = (function () {
         return ret;
     };
     return TestNameFactory;
-})();
+}());
 exports.TestNameFactory = TestNameFactory;
 //# sourceMappingURL=testName-factory.js.map

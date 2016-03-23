@@ -12,7 +12,8 @@ var Crawler = (function () {
     function Crawler(url, tmp) {
         this.sectionTypeReaderMap = {
             'table': this.readTableSection,
-            'widget': this.readWidgetSection
+            'widget': this.readWidgetSection,
+            'distribution': this.readDistributionSection
         };
         this.url = url;
         this.tmp = tmp;
@@ -21,67 +22,8 @@ var Crawler = (function () {
         fs.mkdir(tmp, '0755', function (e) { });
     }
     Crawler.makeTextPlain = function (txt) {
-        //return txt.replace(/\n/g, '').replace(/\t/g, '');
+        //return txt.trim().replace(/\n/g, '').replace(/\t/g, '');
         return txt.trim();
-    };
-    Crawler.prototype.readWidgetSection = function (sectionDOM) {
-        var returnData = {};
-        var sectionID = sectionDOM.attr('id');
-        var _self = this;
-        var lineChart = sectionDOM.find('.line-chart-wrapper');
-        var tableData, fixedTableData = {
-            tableCols: [
-                {
-                    name: '-',
-                    width: '5%'
-                },
-                {
-                    name: 'Metric',
-                    width: '35%'
-                },
-                {
-                    name: 'Location',
-                    width: '20%'
-                },
-                {
-                    name: 'Script',
-                    width: '20%'
-                },
-                {
-                    name: 'Emulation',
-                    width: '20%'
-                }
-            ],
-            tableRowsData: []
-        };
-        if (lineChart) {
-            returnData['images'] = [{
-                    url: _self.tmp + '/media/section_' + sectionID + '.png'
-                }];
-            // read table data
-            tableData = _self.readTableSection.apply(_self, [sectionDOM.find('.legend-container-bottom')]);
-            //console.log(tableData);
-            // fix data
-            tableData.tableRowsData.forEach(function (row) {
-                // remove set visible col
-                row.splice(0, 1);
-                // remove optional transaction name
-                row.splice(2, 1);
-                // remove optional error id
-                row.splice(5, 1);
-                // remove value
-                row.splice(5, 1);
-                row[0] = { color: '2A925B', dashed: false };
-                fixedTableData.tableRowsData.push(row);
-            });
-            returnData['tableCols'] = fixedTableData.tableCols;
-            returnData['tableRowsData'] = fixedTableData.tableRowsData;
-        }
-        else {
-            // TODO handle table widget
-            returnData['type'] = 'table';
-        }
-        return returnData;
     };
     Crawler.prototype.readTableSection = function (sectionDOM) {
         var _self = this;
@@ -142,6 +84,90 @@ var Crawler = (function () {
             tableCols: tableCols,
             tableRowsData: tableRowsData
         };
+    };
+    Crawler.prototype.readWidgetSection = function (sectionDOM) {
+        var returnData = {};
+        var sectionID = sectionDOM.attr('id');
+        var _self = this;
+        var lineChart = sectionDOM.find('.line-chart-wrapper');
+        var tableData, fixedTableData = {
+            tableCols: [
+                {
+                    name: '-',
+                    width: '5%'
+                },
+                {
+                    name: 'Metric',
+                    width: '35%'
+                },
+                {
+                    name: 'Location',
+                    width: '20%'
+                },
+                {
+                    name: 'Script',
+                    width: '20%'
+                },
+                {
+                    name: 'Emulation',
+                    width: '20%'
+                }
+            ],
+            tableRowsData: []
+        };
+        if (lineChart) {
+            returnData['images'] = [{
+                    url: _self.tmp + '/media/section_' + sectionID + '.png'
+                }];
+            // read table data
+            tableData = _self.readTableSection.apply(_self, [sectionDOM.find('.legend-container-bottom')]);
+            //console.log(tableData);
+            // fix data
+            tableData.tableRowsData.forEach(function (row) {
+                // remove set visible col
+                row.splice(0, 1);
+                // remove optional transaction name
+                row.splice(2, 1);
+                // remove optional error id
+                row.splice(5, 1);
+                // remove value
+                row.splice(5, 1);
+                row[0] = { color: '2A925B', dashed: false };
+                fixedTableData.tableRowsData.push(row);
+            });
+            returnData['tableCols'] = fixedTableData.tableCols;
+            returnData['tableRowsData'] = fixedTableData.tableRowsData;
+        }
+        else {
+            // TODO handle table widget
+            returnData['type'] = 'table';
+        }
+        return returnData;
+    };
+    Crawler.prototype.readDistributionSection = function (sectionDOM) {
+        var _self = this;
+        var returnData = {};
+        returnData['sites'] = [];
+        var sites = sectionDOM.find('.crawler-dist-site');
+        sites.each(function (k, siteDOM) {
+            var site = {};
+            var $ = cheerio.load(siteDOM);
+            // headline
+            var headline = Crawler.makeTextPlain($(siteDOM).find('.crawler-dist-site-header').text());
+            var sub_headline = Crawler.makeTextPlain($(siteDOM).find('.crawler-dist-site-subHeader').text());
+            if (sub_headline) {
+                headline += ' ' + sub_headline;
+            }
+            site['headline'] = headline;
+            // table
+            var table = _self.readTableSection($(siteDOM));
+            _.assign(site, table);
+            returnData['sites'].push(site);
+        });
+        returnData['images'] = [{
+                url: _self.tmp + '/media/image_distGraph.png'
+            }];
+        return returnData;
     };
     Crawler.prototype.getSectionTypeFromClass = function (classStr) {
         var sectionType = null, ex = classStr.split(' '), ex2 = [];
@@ -222,6 +248,6 @@ var Crawler = (function () {
         return deferred.promise;
     };
     return Crawler;
-})();
+}());
 exports.Crawler = Crawler;
 //# sourceMappingURL=index.js.map

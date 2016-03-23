@@ -7,7 +7,7 @@
     "noImplicitAny": false,
     "preserveConstEnums": true,
     "removeComments": false,
-    "sourceMap":  true,
+    "sourceMap": true,
     "outDir": "dist"
   }
 }

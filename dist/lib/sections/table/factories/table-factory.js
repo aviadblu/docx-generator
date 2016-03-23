@@ -42,69 +42,71 @@ var TableFactory = (function () {
         };
         var cellIndex = 0;
         rowData.forEach(function (cellData) {
-            var cell = {};
-            var cellEtag = 'w:tc' + section_1.Section.getUniqueElementTag();
-            cell[cellEtag] = {
-                'w:tcPr': {
-                    'w:cnfStyle': {
-                        '$': {
-                            'w:val': '001000000000',
-                            'w:firstRow': '0',
-                            'w:lastRow': '0',
-                            'w:firstColumn': '0',
-                            'w:lastColumn': '0',
-                            'w:oddVBand': '0',
-                            'w:evenVBand': '0',
-                            'w:oddHBand': '0',
-                            'w:evenHBand': '0',
-                            'w:firstRowFirstColumn': '0',
-                            'w:firstRowLastColumn': '0',
-                            'w:lastRowFirstColumn': '0',
-                            'w:lastRowLastColumn': '0'
-                        }
-                    },
-                    'w:tcW': {
-                        '$': {
-                            'w:w': colsData[cellIndex],
-                            'w:type': 'dxa'
-                        }
-                    }
-                },
-                'w:p': {
-                    '$': {
-                        'w:rsidR': _self.id1,
-                        'w:rsidRPr': _self.id1,
-                        'w:rsidRDefault': _self.id1,
-                        'w:rsidP': _self.id1
-                    },
-                    'w:pPr': {
-                        'w:rPr': {
-                            'w:rFonts': {
-                                '$': {
-                                    'w:ascii': config_1.Config.DEFAULT_FONT,
-                                    'w:hAnsi': config_1.Config.DEFAULT_FONT
-                                }
+            if (colsData[cellIndex]) {
+                var cell = {};
+                var cellEtag = 'w:tc' + section_1.Section.getUniqueElementTag();
+                cell[cellEtag] = {
+                    'w:tcPr': {
+                        'w:cnfStyle': {
+                            '$': {
+                                'w:val': '001000000000',
+                                'w:firstRow': '0',
+                                'w:lastRow': '0',
+                                'w:firstColumn': '0',
+                                'w:lastColumn': '0',
+                                'w:oddVBand': '0',
+                                'w:evenVBand': '0',
+                                'w:oddHBand': '0',
+                                'w:evenHBand': '0',
+                                'w:firstRowFirstColumn': '0',
+                                'w:firstRowLastColumn': '0',
+                                'w:lastRowFirstColumn': '0',
+                                'w:lastRowLastColumn': '0'
+                            }
+                        },
+                        'w:tcW': {
+                            '$': {
+                                'w:w': colsData[cellIndex],
+                                'w:type': 'dxa'
                             }
                         }
                     },
-                    'w:r': {
+                    'w:p': {
                         '$': {
-                            'w:rsidRPr': _self.id1
+                            'w:rsidR': _self.id1,
+                            'w:rsidRPr': _self.id1,
+                            'w:rsidRDefault': _self.id1,
+                            'w:rsidP': _self.id1
                         },
-                        'w:rPr': {
-                            'w:rFonts': {
-                                '$': {
-                                    'w:ascii': config_1.Config.DEFAULT_FONT,
-                                    'w:hAnsi': config_1.Config.DEFAULT_FONT
+                        'w:pPr': {
+                            'w:rPr': {
+                                'w:rFonts': {
+                                    '$': {
+                                        'w:ascii': config_1.Config.DEFAULT_FONT,
+                                        'w:hAnsi': config_1.Config.DEFAULT_FONT
+                                    }
                                 }
                             }
                         },
-                        'w:t': cellData
+                        'w:r': {
+                            '$': {
+                                'w:rsidRPr': _self.id1
+                            },
+                            'w:rPr': {
+                                'w:rFonts': {
+                                    '$': {
+                                        'w:ascii': config_1.Config.DEFAULT_FONT,
+                                        'w:hAnsi': config_1.Config.DEFAULT_FONT
+                                    }
+                                }
+                            },
+                            'w:t': cellData
+                        }
                     }
-                }
-            };
-            _.assign(ret[etag], cell);
-            cellIndex++;
+                };
+                _.assign(ret[etag], cell);
+                cellIndex++;
+            }
         });
         return ret;
     };
@@ -148,6 +150,8 @@ var TableFactory = (function () {
             rowIndex++;
         }
         this.tableRowsData.forEach(function (rowData) {
+            //console.log('---------------------------------');
+            //console.log(colsData);
             rowsData[rowIndex] = _self.createRow(colsData, rowData);
             rowIndex++;
         });
@@ -184,6 +188,6 @@ var TableFactory = (function () {
         return ret;
     };
     return TableFactory;
-})();
+}());
 exports.TableFactory = TableFactory;
 //# sourceMappingURL=table-factory.js.map

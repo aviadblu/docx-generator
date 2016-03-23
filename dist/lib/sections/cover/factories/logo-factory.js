@@ -199,6 +199,6 @@ var LogoFactory = (function () {
         return ret;
     };
     return LogoFactory;
-})();
+}());
 exports.LogoFactory = LogoFactory;
 //# sourceMappingURL=logo-factory.js.map

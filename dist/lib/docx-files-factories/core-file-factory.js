@@ -38,6 +38,6 @@ var CoreFileFactory = (function () {
         };
     };
     return CoreFileFactory;
-})();
+}());
 exports.CoreFileFactory = CoreFileFactory;
 //# sourceMappingURL=core-file-factory.js.map

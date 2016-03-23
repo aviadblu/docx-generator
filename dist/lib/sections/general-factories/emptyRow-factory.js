@@ -44,6 +44,6 @@ var EmptyRowFactory = (function () {
         return ret;
     };
     return EmptyRowFactory;
-})();
+}());
 exports.EmptyRowFactory = EmptyRowFactory;
 //# sourceMappingURL=emptyRow-factory.js.map

@@ -5,15 +5,15 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var section_1 = require("../section");
-var image_factory_1 = require("./factories/image-factory");
+var image_factory_1 = require("./../general-factories/image-factory");
 var table_factory_1 = require("../table/factories/table-factory");
 var xml2js = require('xml2js');
 var XMLBuilder = new xml2js.Builder({ pretty: false });
 var SectionWidget = (function (_super) {
     __extends(SectionWidget, _super);
     function SectionWidget(data) {
-        var _self = this;
         _super.call(this, data);
+        var _self = this;
         var key;
         // set widget image [graph snapshot]
         var widgetImage = new image_factory_1.ImageFactory(data['images'][0]).generate();
@@ -33,6 +33,6 @@ var SectionWidget = (function (_super) {
         this._body[key] = widgetTable[key];
     }
     return SectionWidget;
-})(section_1.Section);
+}(section_1.Section));
 exports.SectionWidget = SectionWidget;
 //# sourceMappingURL=index.js.map

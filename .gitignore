@@ -34,6 +34,7 @@ node_modules
 
 output/
 .idea/
+example/
 
 src/**/*.js
 src/**/*.d.ts

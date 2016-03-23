@@ -2,7 +2,7 @@
 
 import {Section} from "../section";
 import {ISectionData} from '../section-interface';
-import {ImageFactory} from "./factories/image-factory";
+import {ImageFactory} from "./../general-factories/image-factory";
 import {RectFactory} from "./factories/rect-factory";
 import {TableFactory} from "../table/factories/table-factory";
 
@@ -13,9 +13,9 @@ var XMLBuilder = new xml2js.Builder({pretty: false});
 
 export class SectionWidget extends Section {
     constructor(data:ISectionData) {
-        var _self = this;
         super(data);
-        let key
+        var _self = this;
+        let key;
         // set widget image [graph snapshot]
         let widgetImage = new ImageFactory(data['images'][0]).generate();
         key = Object.keys(widgetImage)[0];

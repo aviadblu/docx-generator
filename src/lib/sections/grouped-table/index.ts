@@ -8,9 +8,9 @@ import {TableFactory} from "../table/factories/table-factory";
 
 export class SectionGroupedTable extends Section {
     constructor(data:ISectionData) {
+        super(data);
         var _self = this;
         var groupsCounter = 0;
-        super(data);
         data['tableRowsData'].forEach(function(groupData){
             let key;
 
