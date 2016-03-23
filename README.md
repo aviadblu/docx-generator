@@ -2,7 +2,7 @@
 
 ## How to use:
 
-```html
+```javascript
 
 var docxGenerator = require('docx-generator');
 
